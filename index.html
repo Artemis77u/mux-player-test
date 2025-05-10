@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <script src="https://cdn.jsdelivr.net/npm/@mux/mux-player"></script>
-  </head>
-  <body>
-    <script>
-      const params = new URLSearchParams(window.location.search);
-      const email = params.get('email') || 'anonymous';
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/@mux/mux-player"></script>
+</head>
+<body>
+  <div id="player-container"></div>
 
-      const player = document.createElement('mux-player');
-      player.setAttribute('playback-id', 'rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI'); // replace with your actual playback ID
-      player.setAttribute('metadata-video-title', 'Your Wish Is Your Command_2');
-      player.setAttribute('metadata-viewer-user-id', email);
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const email = params.get("email") || "anonymous";
 
-      document.body.appendChild(player);
-    </script>
-  </body>
+    const player = document.createElement("mux-player");
+    player.setAttribute("playback-id", "rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI");
+    player.setAttribute("metadata-video-title", "Your Wish Is Your Command_2");
+    player.setAttribute("metadata-viewer-user-id", email);
+    player.setAttribute("stream-type", "on-demand");
+
+    document.getElementById("player-container").appendChild(player);
+  </script>
+</body>
 </html>
+

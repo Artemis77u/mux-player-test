@@ -58,26 +58,25 @@
   <script>
     const params = new URLSearchParams(window.location.search);
     const emailFromUrl = params.get("email");
+    const storedEmail = localStorage.getItem("userEmail");
+    const email = emailFromUrl || storedEmail;
 
+    // Save to localStorage only if passed in the URL
     if (emailFromUrl) {
       localStorage.setItem("userEmail", emailFromUrl);
     }
-
-    const email = emailFromUrl || localStorage.getItem("userEmail");
 
     function handleSubmit(e) {
       e.preventDefault();
       const code = document.getElementById("code").value.trim().toUpperCase();
 
-      if (code !== "YWIYC") {
-        alert("Invalid access code.");
+      if (!email || !email.includes("@")) {
+        alert("Missing email. Please access this page via your invite link.");
         return;
       }
 
-      localStorage.setItem("code", code);
-
-      if (!email || !email.includes("@")) {
-        alert("Email missing. Please access via your invite link.");
+      if (code !== "YWIYC") {
+        alert("Invalid access code.");
         return;
       }
 
@@ -86,7 +85,3 @@
   </script>
 </body>
 </html>
-
-
-
-

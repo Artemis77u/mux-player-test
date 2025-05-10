@@ -1,26 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <title>Mux Player with Dynamic Viewer ID</title>
     <script src="https://cdn.jsdelivr.net/npm/@mux/mux-player"></script>
-    <style>
-      body { margin: 0; background: #000; }
-      mux-player { width: 100%; height: 100vh; }
-    </style>
   </head>
   <body>
-    <mux-player
-      playback-id="rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI"
-      metadata-video-title="Your Wish Is Your Command_2"
-    ></mux-player>
-
     <script>
-      const urlParams = new URLSearchParams(window.location.search);
-      const email = urlParams.get('email') || 'anonymous@example.com';
+      const params = new URLSearchParams(window.location.search);
+      const email = params.get('email') || 'anonymous';
 
-      const player = document.querySelector('mux-player');
+      const player = document.createElement('mux-player');
+      player.setAttribute('playback-id', 'rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI'); // replace with your actual playback ID
+      player.setAttribute('metadata-video-title', 'Your Wish Is Your Command_2');
       player.setAttribute('metadata-viewer-user-id', email);
+
+      document.body.appendChild(player);
     </script>
   </body>
 </html>

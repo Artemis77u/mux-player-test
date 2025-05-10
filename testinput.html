@@ -1,28 +1,46 @@
-<script>
-  const form = document.getElementById("access-form");
-  const emailInput = document.getElementById("email");
-  const couponInput = document.getElementById("coupon");
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Coupon Access Test</title>
+</head>
+<body>
+  <h2>Access Your Wish Is Your Command</h2>
+  <form id="access-form">
+    <input type="text" id="coupon" placeholder="Enter coupon code" />
+    <br />
+    <input type="email" id="email" placeholder="Enter your email" />
+    <br />
+    <button type="submit">Submit</button>
+  </form>
 
-  // Autofill from localStorage if available
-  window.onload = () => {
-    const savedEmail = localStorage.getItem("email");
-    const savedCoupon = localStorage.getItem("coupon");
-    if (savedEmail) emailInput.value = savedEmail;
-    if (savedCoupon) couponInput.value = savedCoupon;
-  };
+  <script>
+    const form = document.getElementById("access-form");
+    const emailInput = document.getElementById("email");
+    const couponInput = document.getElementById("coupon");
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const email = emailInput.value.trim();
-    const coupon = couponInput.value.trim();
+    // Autofill from localStorage if available
+    window.onload = () => {
+      const savedEmail = localStorage.getItem("email");
+      const savedCoupon = localStorage.getItem("coupon");
+      if (savedEmail) emailInput.value = savedEmail;
+      if (savedCoupon) couponInput.value = savedCoupon;
+    };
 
-    if (coupon === "YWIYC" && email.includes("@")) {
-      // Save to localStorage
-      localStorage.setItem("email", email);
-      localStorage.setItem("coupon", coupon);
-      window.location.href = `video.html?email=${encodeURIComponent(email)}`;
-    } else {
-      alert("Invalid coupon or email.");
-    }
-  });
-</script>
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = emailInput.value.trim();
+      const coupon = couponInput.value.trim().toUpperCase();
+
+      if (coupon === "YWIYC" && email.includes("@")) {
+        localStorage.setItem("email", email);
+        localStorage.setItem("coupon", coupon);
+        window.location.href = `video.html?email=${encodeURIComponent(email)}`;
+      } else {
+        alert("Invalid coupon or email.");
+      }
+    });
+  </script>
+</body>
+</html>
+

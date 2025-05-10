@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Your Course</title>
   <script src="https://cdn.jsdelivr.net/npm/@mux/mux-player"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mux-embed@5"></script>
+
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
@@ -40,29 +42,34 @@
   </style>
 </head>
 <body>
- <h1>Your Wish Is Your Command</h1>
+  <h1>Your Wish Is Your Command</h1>
 
-  <div class="video-section" id="video-container"></div>
+  <div id="video-container">
+    <video id="video" controls preload="auto" width="100%">
+      <source src="https://stream.mux.com/rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI.m3u8" type="application/x-mpegURL">
+      Your browser does not support the video tag.
+    </video>
+  </div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const email = params.get("email");
+    const envKey = "1mb83nn1ar08r0faf628pf2u5";
 
     if (!email || !email.includes("@")) {
       document.body.innerHTML = "<h2 style='color:red; text-align:center;'>Access denied. Missing or invalid email.</h2>";
     } else {
-      const container = document.getElementById("video-container");
-
-      container.innerHTML = `
-        <mux-player
-          playback-id="rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI"
-          metadata-video-title="Your Wish Is Your Command_2"
-          metadata-viewer-user-id="${email}"
-          metadata-env-key="1mb83nn1ar08r0faf628pf2u5"
-          stream-type="on-demand"
-        ></mux-player>
-        <div class="video-title">Part 1: Your Wish Is Your Command</div>
-      `;
+      mux.monitor("#video", {
+        debug: true,
+        data: {
+          env_key: envKey,
+          viewer_user_id: email,
+          player_name: "Custom HTML Player",
+          video_title: "Your Wish Is Your Command",
+          video_id: "YWIYC_2",
+          video_stream_type: "on-demand"
+        }
+      });
     }
   </script>
 </body>

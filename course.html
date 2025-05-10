@@ -1,24 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Course</title>
   <script src="https://cdn.jsdelivr.net/npm/@mux/mux-player"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .video-section {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    }
+
+    mux-player {
+      width: 100%;
+      height: 300px;
+      border-radius: 10px;
+    }
+
+    .video-title {
+      margin-top: 1rem;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+  </style>
 </head>
 <body>
-  <div id="player-container"></div>
+  <h1>Your Wish Is Your Command</h1>
+
+  <div class="video-section">
+    <mux-player
+      id="mux-player"
+      playback-id="rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI"
+      metadata-video-title="Your Wish Is Your Command_2"
+      metadata-viewer-user-id=""
+      stream-type="on-demand"
+    ></mux-player>
+    <div class="video-title">Part 1: Your Wish Is Your Command</div>
+  </div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
-    const email = params.get("email") || "anonymous";
+    const emailFromUrl = params.get("email");
+    const storedEmail = localStorage.getItem("userEmail");
+    const email = emailFromUrl || storedEmail;
 
-    const player = document.createElement("mux-player");
-    player.setAttribute("playback-id", "rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI");
-    player.setAttribute("metadata-video-title", "Your Wish Is Your Command_2");
-    player.setAttribute("metadata-viewer-user-id", email);
-    player.setAttribute("stream-type", "on-demand");
-
-    document.getElementById("player-container").appendChild(player);
+    // Set viewer ID or deny access
+    if (!email || !email.includes("@")) {
+      document.body.innerHTML = "<h2 style='color:red; text-align:center;'>Access denied. Missing email.</h2>";
+    } else {
+      localStorage.setItem("userEmail", email); // save for future
+      document.getElementById("mux-player").setAttribute("metadata-viewer-user-id", email);
+    }
   </script>
 </body>
 </html>
+
 

@@ -1,0 +1,28 @@
+<script>
+  const form = document.getElementById("access-form");
+  const emailInput = document.getElementById("email");
+  const couponInput = document.getElementById("coupon");
+
+  // Autofill from localStorage if available
+  window.onload = () => {
+    const savedEmail = localStorage.getItem("email");
+    const savedCoupon = localStorage.getItem("coupon");
+    if (savedEmail) emailInput.value = savedEmail;
+    if (savedCoupon) couponInput.value = savedCoupon;
+  };
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const email = emailInput.value.trim();
+    const coupon = couponInput.value.trim();
+
+    if (coupon === "YWIYC" && email.includes("@")) {
+      // Save to localStorage
+      localStorage.setItem("email", email);
+      localStorage.setItem("coupon", coupon);
+      window.location.href = `video.html?email=${encodeURIComponent(email)}`;
+    } else {
+      alert("Invalid coupon or email.");
+    }
+  });
+</script>

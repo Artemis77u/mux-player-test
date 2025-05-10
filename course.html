@@ -40,36 +40,29 @@
   </style>
 </head>
 <body>
-  <h1>Your Wish Is Your Command</h1>
+ <h1>Your Wish Is Your Command</h1>
 
-  <div class="video-section" id="video-container">
-    <!-- player gets inserted here -->
-  </div>
+  <div class="video-section" id="video-container"></div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
-    const emailFromUrl = params.get("email");
-    const storedEmail = localStorage.getItem("userEmail");
-    const email = emailFromUrl || storedEmail;
+    const email = params.get("email");
 
     if (!email || !email.includes("@")) {
-      document.body.innerHTML = "<h2 style='color:red; text-align:center;'>Access denied. Missing email.</h2>";
+      document.body.innerHTML = "<h2 style='color:red; text-align:center;'>Access denied. Missing or invalid email.</h2>";
     } else {
-      localStorage.setItem("userEmail", email); // keep for future
+      const container = document.getElementById("video-container");
 
-      const player = document.createElement("mux-player");
-      player.setAttribute("playback-id", "rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI");
-      player.setAttribute("metadata-video-title", "Your Wish Is Your Command_2");
-      player.setAttribute("metadata-viewer-user-id", email);
-      player.setAttribute("metadata-env-key", "1mb83nn1ar08r0faf628pf2u5");
-      player.setAttribute("stream-type", "on-demand");
-
-      document.getElementById("video-container").prepend(player);
-
-      const title = document.createElement("div");
-      title.className = "video-title";
-      title.textContent = "Part 1: Your Wish Is Your Command";
-      document.getElementById("video-container").appendChild(title);
+      container.innerHTML = `
+        <mux-player
+          playback-id="rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI"
+          metadata-video-title="Your Wish Is Your Command_2"
+          metadata-viewer-user-id="${email}"
+          metadata-env-key="1mb83nn1ar08r0faf628pf2u5"
+          stream-type="on-demand"
+        ></mux-player>
+        <div class="video-title">Part 1: Your Wish Is Your Command</div>
+      `;
     }
   </script>
 </body>

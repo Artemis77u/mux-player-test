@@ -1,19 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <script src="https://cdn.jsdelivr.net/npm/@mux/mux-player"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mux-embed@5"></script>
 </head>
 <body>
-  <mux-player
-    playback-id="rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI"
-    metadata-video-title="YWIYC"
-    metadata-viewer-user-id="demo@muxtrack.com"
-    metadata-env-key="1mb83nn1ar08r0faf628pf2u5"
-    stream-type="on-demand"
-  ></mux-player>
+  <div id="player-container"></div>
+
+  <script>
+    const email = new URLSearchParams(window.location.search).get("email") || "anonymous";
+
+    const player = document.createElement("mux-player");
+    player.setAttribute("playback-id", "rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI");
+    player.setAttribute("metadata-video-title", "Your Wish Is Your Command_2");
+    player.setAttribute("metadata-viewer-user-id", email);
+    player.setAttribute("metadata-env-key", "1mb83nn1ar08r0faf628pf2u5");
+    player.setAttribute("stream-type", "on-demand");
+
+    document.getElementById("player-container").appendChild(player);
+  </script>
 </body>
 </html>
+
 
 
 

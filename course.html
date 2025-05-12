@@ -2,86 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>YWIYC Course</title>
-  <script src="https://cdn.jsdelivr.net/npm/@mux/mux-player"></script>
+  <title>YWIYC Manual Tracking Test</title>
   <script src="https://cdn.jsdelivr.net/npm/mux-embed@5"></script>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
-      background: #f9f9f9;
-      margin: 0;
-      padding: 2rem;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
-    .video-container {
-      max-width: 800px;
-      margin: 0 auto 2rem auto;
-      background: #fff;
-      padding: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-
-    mux-player {
-      width: 100%;
-      height: 360px;
-      border-radius: 8px;
-    }
-
-    .video-title {
-      margin: 1rem 0 0.5rem;
-      font-weight: bold;
-    }
-  </style>
 </head>
-<body>
-  <h1>Your Wish Is Your Command – Full Course</h1>
+<body style="padding:2rem; font-family:sans-serif;">
+  <h1>Your Wish Is Your Command – Part 1</h1>
 
-  <div class="video-container">
-    <div class="video-title">Part 1: Introduction</div>
-    <div id="video1"></div>
-  </div>
-
-  <div class="video-container">
-    <div class="video-title">Part 2: Next Level</div>
-    <div id="video2"></div>
-  </div>
+  <video id="video1" controls style="width:100%; max-width:800px; border-radius:8px;">
+    <source src="https://stream.mux.com/rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI.m3u8" type="application/x-mpegURL" />
+  </video>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const email = params.get("email") || localStorage.getItem("userEmail");
 
-    if (!email) {
-      document.body.innerHTML = "<h2 style='color:red; text-align:center;'>Access denied. Missing email.</h2>";
+    if (!email || !email.includes("@")) {
+      document.body.innerHTML = "<h2 style='color:red; text-align:center;'>Access denied. Missing or invalid email.</h2>";
     } else {
       localStorage.setItem("userEmail", email);
 
-      const videoData = [
-        {
-          id: "video1",
-          playbackId: "rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI",
-          title: "Your Wish Is Your Command – Part 1"
-        },
-        {
-          id: "video2",
-          playbackId: "w74XmGr00yLn0001r4PPyJmIwgurb2t5BigF2DvDTDVo1c",
-          title: "Your Wish Is Your Command – Part 2"
+      mux.monitor('#video1', {
+        debug: true,
+        data: {
+          env_key: '1mb83nn1ar08r0faf628pf2u5',
+          viewer_user_id: email,
+          video_id: 'ywi-part-1',
+          video_title: 'Your Wish Is Your Command – Part 1',
+          player_name: 'Mux Manual Player',
+          video_stream_type: 'on-demand'
         }
-      ];
-
-      videoData.forEach((video) => {
-        const player = document.createElement("mux-player");
-        player.setAttribute("playback-id", video.playbackId);
-        player.setAttribute("metadata-video-title", video.title);
-        player.setAttribute("metadata-viewer-user-id", email);
-        player.setAttribute("metadata-env-key", "1mb83nn1ar08r0faf628pf2u5");
-        player.setAttribute("stream-type", "on-demand");
-        document.getElementById(video.id).appendChild(player);
       });
     }
   </script>

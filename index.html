@@ -49,33 +49,44 @@
 <body>
   <div class="card">
     <h2>Access the Course</h2>
-    <form id="emailForm">
+    <form id="accessForm">
       <input type="email" id="email" placeholder="Your email" required />
+      <input type="text" id="code" placeholder="Access Code" required />
       <button type="submit">Continue</button>
       <div class="error" id="errorMsg"></div>
     </form>
   </div>
 
   <script>
-    const storedEmail = localStorage.getItem("userEmail");
+    const savedEmail = localStorage.getItem("userEmail");
+    const savedCode = localStorage.getItem("accessCode");
 
-    if (storedEmail) {
-      // Auto-forward if email already stored
-      window.location.href = `course.html?email=${encodeURIComponent(storedEmail)}`;
+    if (savedEmail && savedCode === "YWIYC") {
+      window.location.href = `course.html?email=${encodeURIComponent(savedEmail)}`;
     }
 
-    document.getElementById("emailForm").addEventListener("submit", function (e) {
+    document.getElementById("accessForm").addEventListener("submit", function (e) {
       e.preventDefault();
+
       const email = document.getElementById("email").value.trim();
+      const code = document.getElementById("code").value.trim();
 
       if (!email.includes("@")) {
         document.getElementById("errorMsg").textContent = "Please enter a valid email.";
         return;
       }
 
+      if (code !== "YWIYC") {
+        document.getElementById("errorMsg").textContent = "Invalid access code.";
+        return;
+      }
+
       localStorage.setItem("userEmail", email);
+      localStorage.setItem("accessCode", code);
+
       window.location.href = `course.html?email=${encodeURIComponent(email)}`;
     });
   </script>
 </body>
 </html>
+

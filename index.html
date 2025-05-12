@@ -57,15 +57,11 @@
   </div>
 
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const emailFromUrl = urlParams.get("email");
     const storedEmail = localStorage.getItem("userEmail");
 
-    if (emailFromUrl) {
-      localStorage.setItem("userEmail", emailFromUrl);
-      window.location.href = `course.html?email=${encodeURIComponent(emailFromUrl)}`;
-    } else if (storedEmail) {
-      document.getElementById("email").value = storedEmail;
+    if (storedEmail) {
+      // Auto-forward if email already stored
+      window.location.href = `course.html?email=${encodeURIComponent(storedEmail)}`;
     }
 
     document.getElementById("emailForm").addEventListener("submit", function (e) {

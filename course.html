@@ -1,25 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <script src="https://cdn.jsdelivr.net/npm/@mux/mux-player"></script>
   <script src="https://cdn.jsdelivr.net/npm/mux-embed@5"></script>
 </head>
 <body>
-  <div id="player-container"></div>
+  <h1>Your Wish Is Your Command – Full Course</h1>
+
+  <div id="video1"></div>
+  <div id="video2"></div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
-    const email = params.get("email") || "anonymous";
+    const email = params.get("email") || localStorage.getItem("userEmail");
 
-    const player = document.createElement("mux-player");
-    player.setAttribute("playback-id", "rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI");
-    player.setAttribute("metadata-video-title", "Your Wish Is Your Command_2");
-    player.setAttribute("metadata-viewer-user-id", email);
-    player.setAttribute("metadata-env-key", "1mb83nn1ar08r0faf628pf2u5");
-    player.setAttribute("stream-type", "on-demand");
+    if (!email) {
+      document.body.innerHTML = "<h2 style='color:red; text-align:center;'>Access denied. Missing email.</h2>";
+    } else {
+      localStorage.setItem("userEmail", email);
 
-    document.getElementById("player-container").appendChild(player);
+      const videoData = [
+        {
+          id: "video1",
+          playbackId: "rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI",
+          title: "Your Wish Is Your Command – Part 1"
+        },
+        {
+          id: "video2",
+          playbackId: "w74XmGr00yLn0001r4PPyJmIwgurb2t5BigF2DvDTDVo1c",
+          title: "Your Wish Is Your Command – Part 2"
+        }
+      ];
+
+      videoData.forEach((video) => {
+        const player = document.createElement("mux-player");
+        player.setAttribute("playback-id", video.playbackId);
+        player.setAttribute("metadata-video-title", video.title);
+        player.setAttribute("metadata-viewer-user-id", email);
+        player.setAttribute("metadata-env-key", "1mb83nn1ar08r0faf628pf2u5");
+        player.setAttribute("stream-type", "on-demand");
+        document.getElementById(video.id).appendChild(player);
+      });
+    }
   </script>
 </body>
 </html>

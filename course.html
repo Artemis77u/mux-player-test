@@ -2,14 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>YWIYC Course</title>
   <script src="https://cdn.jsdelivr.net/npm/@mux/mux-player"></script>
   <script src="https://cdn.jsdelivr.net/npm/mux-embed@5"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .video-container {
+      max-width: 800px;
+      margin: 0 auto 2rem auto;
+      background: #fff;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    mux-player {
+      width: 100%;
+      height: 360px;
+      border-radius: 8px;
+    }
+
+    .video-title {
+      margin: 1rem 0 0.5rem;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
   <h1>Your Wish Is Your Command – Full Course</h1>
 
-  <div id="video1"></div>
-  <div id="video2"></div>
+  <div class="video-container">
+    <div class="video-title">Part 1: Introduction</div>
+    <div id="video1"></div>
+  </div>
+
+  <div class="video-container">
+    <div class="video-title">Part 2: Next Level</div>
+    <div id="video2"></div>
+  </div>
 
   <script>
     const params = new URLSearchParams(window.location.search);

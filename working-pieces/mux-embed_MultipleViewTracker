@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>YWIYC – Full Course (Tracked Manually)</title>
+  <script src="https://cdn.jsdelivr.net/npm/mux-embed@5"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f8f8f8;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .video-block {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    video {
+      width: 100%;
+      border-radius: 8px;
+    }
+    .video-title {
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Your Wish Is Your Command – Full Course</h1>
+
+  <div class="video-block">
+    <div class="video-title">Part 1</div>
+    <video id="video1" controls>
+      <source src="https://stream.mux.com/rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI.m3u8" type="application/x-mpegURL" />
+    </video>
+  </div>
+
+  <div class="video-block">
+    <div class="video-title">Part 2</div>
+    <video id="video2" controls>
+      <source src="https://stream.mux.com/w74XmGr00yLn0001r4PPyJmIwgurb2t5BigF2DvDTDVo1c.m3u8" type="application/x-mpegURL" />
+    </video>
+  </div>
+
+
+ <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const email = params.get("email") || localStorage.getItem("userEmail");
+
+  if (!email || !email.includes("@")) {
+    document.body.innerHTML = "<h2 style='color:red; text-align:center;'>Access denied. Missing or invalid email.</h2>";
+  } else {
+    localStorage.setItem("userEmail", email);
+
+    const videoData = [
+      {
+        id: 'video1',
+        src: 'https://stream.mux.com/rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI.m3u8',
+        title: 'Your Wish Is Your Command – Part 1',
+        vid: 'ywi-part-1'
+      },
+      {
+        id: 'video2',
+        src: 'https://stream.mux.com/w74XmGr00yLn0001r4PPyJmIwgurb2t5BigF2DvDTDVo1c.m3u8',
+        title: 'Your Wish Is Your Command – Part 2',
+        vid: 'ywi-part-2'
+      }
+    ];
+
+    videoData.forEach(video => {
+      const videoEl = document.getElementById(video.id);
+
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(video.src);
+        hls.attachMedia(videoEl);
+      } else if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
+        videoEl.src = video.src;
+      }
+
+      mux.monitor(`#${video.id}`, {
+        data: {
+          env_key: '1mb83nn1ar08r0faf628pf2u5',
+          viewer_user_id: email,
+          video_id: video.vid,
+          video_title: video.title,
+          player_name: 'ManualMux + HLS.js',
+          video_stream_type: 'on-demand'
+        }
+      });
+    });
+  }
+</script>
+
+</body>
+</html>

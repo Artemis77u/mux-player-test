@@ -40,7 +40,7 @@
     const email = localStorage.getItem("userEmail") || "anonymous";
     const airtableToken = "patNGrZNwfEVXAAQQ.0b066f675070d9280cac1ff726847edb1474cbc9dae0cc8634dd5e2369cac9ae";
     const baseId = "app0nqXjYS3mdULGj";
-    const tableName = "Imported%20table"; // URL-encoded version of "Imported table"
+    const tableName = "Imported%20table"; // URL-encoded
 
     fetch(`https://api.airtable.com/v0/${baseId}/${tableName}`, {
       headers: {
@@ -54,17 +54,17 @@
       data.records.forEach(record => {
         const title = record.fields["Title"];
         const playbackId = record.fields["Playback ID"];
-        const videoId = record.id;
+        const videoElementId = `video-${playbackId}`;
 
         const block = document.createElement("div");
         block.className = "video-block";
         block.innerHTML = `
           <div class="video-title">${title}</div>
-          <video id="${videoId}" controls></video>
+          <video id="${videoElementId}" controls></video>
         `;
         container.appendChild(block);
 
-        const videoEl = document.getElementById(videoId);
+        const videoEl = document.getElementById(videoElementId);
 
         if (Hls.isSupported()) {
           const hls = new Hls();
@@ -74,16 +74,18 @@
           videoEl.src = `https://stream.mux.com/${playbackId}.m3u8`;
         }
 
-        mux.monitor(`#${videoId}`, {
+        mux.monitor(`#${videoElementId}`, {
           data: {
             env_key: "1mb83nn1ar08r0faf628pf2u5",
             viewer_user_id: email,
-            video_id: videoId,
+            video_id: playbackId,
             video_title: title,
             player_name: "Dynamic Airtable Player",
             video_stream_type: "on-demand"
           }
         });
+
+        console.log(`Tracking: ${title}, viewer: ${email}`);
       });
     })
     .catch(err => {
@@ -93,3 +95,4 @@
   </script>
 </body>
 </html>
+

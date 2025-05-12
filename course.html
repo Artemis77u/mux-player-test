@@ -2,23 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <script src="https://cdn.jsdelivr.net/npm/@mux/mux-player"></script>
+  <title>Mux Test Manual Tracking</title>
   <script src="https://cdn.jsdelivr.net/npm/mux-embed@5"></script>
 </head>
 <body>
-  <div id="player-container"></div>
+  <video id="video" controls autoplay muted width="100%">
+    <source src="https://stream.mux.com/rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI.m3u8" type="application/x-mpegURL">
+    Your browser does not support video playback.
+  </video>
 
   <script>
     const email = new URLSearchParams(window.location.search).get("email") || "anonymous";
 
-    const player = document.createElement("mux-player");
-    player.setAttribute("playback-id", "rlY00nT025TD1JX00f00o1ua3zHpjMEZLsLtGiAOP02yhKbI");
-    player.setAttribute("metadata-video-title", "Your Wish Is Your Command_2");
-    player.setAttribute("metadata-viewer-user-id", email);
-    player.setAttribute("metadata-env-key", "1mb83nn1ar08r0faf628pf2u5");
-    player.setAttribute("stream-type", "on-demand");
-
-    document.getElementById("player-container").appendChild(player);
+    mux.monitor('#video', {
+      debug: true,
+      data: {
+        env_key: "1mb83nn1ar08r0faf628pf2u5",
+        viewer_user_id: email,
+        video_title: "Your Wish Is Your Command - Manual",
+        video_id: "YW2-manual",
+        player_name: "HTML5 Manual",
+        video_stream_type: "on-demand"
+      }
+    });
   </script>
 </body>
 </html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Access the Course</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 1.5rem;
+      width: 100%;
+      background: #007aff;
+      color: white;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .error {
+      color: red;
+      margin-top: 1rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Access the Course</h2>
+    <form id="accessForm">
+      <input type="email" id="email" placeholder="Your email" required />
+      <input type="text" id="code" placeholder="Access Code" required />
+      <button type="submit">Continue</button>
+      <div class="error" id="errorMsg"></div>
+    </form>
+  </div>
+
+  <script>
+    const savedEmail = localStorage.getItem("userEmail");
+    const savedCode = localStorage.getItem("accessCode");
+
+    if (savedEmail && savedCode === "YWIYC") {
+      window.location.href = `course.html?email=${encodeURIComponent(savedEmail)}`;
+    }
+
+    document.getElementById("accessForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const code = document.getElementById("code").value.trim();
+
+      if (!email.includes("@")) {
+        document.getElementById("errorMsg").textContent = "Please enter a valid email.";
+        return;
+      }
+
+      if (code !== "YWIYC") {
+        document.getElementById("errorMsg").textContent = "Invalid access code.";
+        return;
+      }
+
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("accessCode", code);
+
+      window.location.href = `course.html?email=${encodeURIComponent(email)}`;
+    });
+  </script>
+</body>
+</html>

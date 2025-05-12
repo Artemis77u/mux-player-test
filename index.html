@@ -2,86 +2,84 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Enter Access Code</title>
+  <title>Access the Course</title>
   <style>
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f4f4f4;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      margin: 0;
-      background: #f2f2f2;
     }
-
-    .form-container {
+    .card {
       background: white;
       padding: 2rem;
       border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.05);
-      max-width: 400px;
-      width: 90%;
-    }
-
-    input, button {
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
       width: 100%;
-      padding: 0.8rem;
+      max-width: 400px;
+    }
+    input {
+      width: 100%;
+      padding: 0.75rem;
       margin-top: 1rem;
-      font-size: 1rem;
       border: 1px solid #ccc;
       border-radius: 8px;
-      box-sizing: border-box;
+      font-size: 1rem;
     }
-
     button {
-      background-color: #007aff;
+      margin-top: 1.5rem;
+      width: 100%;
+      background: #007aff;
       color: white;
       border: none;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-size: 1rem;
       cursor: pointer;
     }
-
-    button:hover {
-      background-color: #005ecb;
+    .error {
+      color: red;
+      margin-top: 1rem;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <div class="form-container">
-    <form onsubmit="handleSubmit(event)">
-      <label for="code">Enter Access Code</label>
-      <input type="text" id="code" placeholder="YWIYC" required />
-      <button type="submit">Access Course</button>
+  <div class="card">
+    <h2>Access the Course</h2>
+    <form id="emailForm">
+      <input type="email" id="email" placeholder="Your email" required />
+      <button type="submit">Continue</button>
+      <div class="error" id="errorMsg"></div>
     </form>
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const emailFromUrl = params.get("email");
+    const urlParams = new URLSearchParams(window.location.search);
+    const emailFromUrl = urlParams.get("email");
     const storedEmail = localStorage.getItem("userEmail");
-    const email = emailFromUrl || storedEmail;
 
-    // Save to localStorage only if passed in the URL
     if (emailFromUrl) {
       localStorage.setItem("userEmail", emailFromUrl);
+      window.location.href = `course.html?email=${encodeURIComponent(emailFromUrl)}`;
+    } else if (storedEmail) {
+      document.getElementById("email").value = storedEmail;
     }
 
-    function handleSubmit(e) {
+    document.getElementById("emailForm").addEventListener("submit", function (e) {
       e.preventDefault();
-      const code = document.getElementById("code").value.trim().toUpperCase();
+      const email = document.getElementById("email").value.trim();
 
-      if (!email || !email.includes("@")) {
-        alert("Missing email. Please access this page via your invite link.");
+      if (!email.includes("@")) {
+        document.getElementById("errorMsg").textContent = "Please enter a valid email.";
         return;
       }
 
-      if (code !== "YWIYC") {
-        alert("Invalid access code.");
-        return;
-      }
-
+      localStorage.setItem("userEmail", email);
       window.location.href = `course.html?email=${encodeURIComponent(email)}`;
-    }
+    });
   </script>
 </body>
 </html>

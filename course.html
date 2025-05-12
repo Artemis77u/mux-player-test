@@ -37,10 +37,12 @@
   <div id="videos-container"></div>
 
   <script>
-    const email = localStorage.getItem("userEmail") || "anonymous";
+    const email = new URLSearchParams(window.location.search).get("email") || localStorage.getItem("userEmail") || "anonymous";
+    localStorage.setItem("userEmail", email);
+
     const airtableToken = "patNGrZNwfEVXAAQQ.0b066f675070d9280cac1ff726847edb1474cbc9dae0cc8634dd5e2369cac9ae";
     const baseId = "app0nqXjYS3mdULGj";
-    const tableName = "Imported%20table"; // URL-encoded
+    const tableName = "Imported%20table"; // URL-encoded "Imported table"
 
     fetch(`https://api.airtable.com/v0/${baseId}/${tableName}`, {
       headers: {
@@ -54,17 +56,17 @@
       data.records.forEach(record => {
         const title = record.fields["Title"];
         const playbackId = record.fields["Playback ID"];
-        const videoElementId = `video-${playbackId}`;
+        const videoId = record.id;
 
         const block = document.createElement("div");
         block.className = "video-block";
         block.innerHTML = `
           <div class="video-title">${title}</div>
-          <video id="${videoElementId}" controls></video>
+          <video id="${videoId}" controls></video>
         `;
         container.appendChild(block);
 
-        const videoEl = document.getElementById(videoElementId);
+        const videoEl = document.getElementById(videoId);
 
         if (Hls.isSupported()) {
           const hls = new Hls();
@@ -74,18 +76,19 @@
           videoEl.src = `https://stream.mux.com/${playbackId}.m3u8`;
         }
 
-        mux.monitor(`#${videoElementId}`, {
-          data: {
-            env_key: "1mb83nn1ar08r0faf628pf2u5",
-            viewer_user_id: email,
-            video_id: playbackId,
-            video_title: title,
-            player_name: "Dynamic Airtable Player",
-            video_stream_type: "on-demand"
-          }
-        });
-
-        console.log(`Tracking: ${title}, viewer: ${email}`);
+        setTimeout(() => {
+          mux.monitor(`#${videoId}`, {
+            debug: true,
+            data: {
+              env_key: "1mb83nn1ar08r0faf628pf2u5",
+              viewer_user_id: email,
+              video_id: videoId,
+              video_title: title,
+              player_name: "Dynamic Airtable Player",
+              video_stream_type: "on-demand"
+            }
+          });
+        }, 250);
       });
     })
     .catch(err => {
@@ -95,4 +98,5 @@
   </script>
 </body>
 </html>
+
 

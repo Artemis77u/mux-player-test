@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dynamic Airtable Course</title>
+  <script src="https://cdn.jsdelivr.net/npm/mux-embed@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f8f8f8;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+    }
+    .video-block {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    video {
+      width: 100%;
+      border-radius: 8px;
+    }
+    .video-title {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Your Wish Is Your Command – Dynamic Course</h1>
+  <div id="videos-container"></div>
+
+  <script>
+    const email = new URLSearchParams(window.location.search).get("email") || localStorage.getItem("userEmail") || "anonymous";
+    localStorage.setItem("userEmail", email);
+
+    const airtableToken = "patNGrZNwfEVXAAQQ.0b066f675070d9280cac1ff726847edb1474cbc9dae0cc8634dd5e2369cac9ae";
+    const baseId = "app0nqXjYS3mdULGj";
+    const tableName = "Imported%20table";
+    const makeWebhookUrl = "https://hook.us2.make.com/r5m5023uf3wh4qgymgp1wjsqmue3bd71";
+
+    fetch(`https://api.airtable.com/v0/${baseId}/${tableName}`, {
+      headers: {
+        Authorization: `Bearer ${airtableToken}`
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById("videos-container");
+
+      data.records.forEach(record => {
+        const title = record.fields["Title"];
+        const playbackId = record.fields["Playback ID"];
+        const videoId = record.id;
+
+        const block = document.createElement("div");
+        block.className = "video-block";
+        block.innerHTML = `
+          <div class="video-title">${title}</div>
+          <video id="${videoId}" controls></video>
+        `;
+        container.appendChild(block);
+
+        const videoEl = document.getElementById(videoId);
+
+        if (Hls.isSupported()) {
+          const hls = new Hls();
+          hls.loadSource(`https://stream.mux.com/${playbackId}.m3u8`);
+          hls.attachMedia(videoEl);
+        } else if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
+          videoEl.src = `https://stream.mux.com/${playbackId}.m3u8`;
+        }
+
+        setTimeout(() => {
+          mux.monitor(`#${videoId}`, {
+            debug: true,
+            data: {
+              env_key: "1mb83nn1ar08r0faf628pf2u5",
+              viewer_user_id: email,
+              video_id: videoId,
+              video_title: title,
+              player_name: "Dynamic Airtable Player",
+              video_stream_type: "on-demand"
+            }
+          });
+
+          const sendEvent = (eventType) => {
+            fetch(makeWebhookUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                viewer_user_id: email,
+                video_id: videoId,
+                video_title: title,
+                event_type: eventType,
+                timestamp: new Date().toISOString()
+              })
+            });
+          };
+
+          videoEl.addEventListener("play", () => sendEvent("play"));
+          videoEl.addEventListener("pause", () => sendEvent("pause"));
+
+          videoEl.addEventListener("timeupdate", () => {
+            const percent = (videoEl.currentTime / videoEl.duration) * 100;
+
+            if (percent > 25 && !videoEl._sent25) {
+              sendEvent("25% watched");
+              videoEl._sent25 = true;
+            }
+            if (percent > 50 && !videoEl._sent50) {
+              sendEvent("50% watched");
+              videoEl._sent50 = true;
+            }
+            if (percent > 75 && !videoEl._sent75) {
+              sendEvent("75% watched");
+              videoEl._sent75 = true;
+            }
+            if (percent > 95 && !videoEl._sent100) {
+              sendEvent("100% watched");
+              videoEl._sent100 = true;
+            }
+          });
+        }, 250);
+      });
+    })
+    .catch(err => {
+      console.error("Failed to fetch Airtable data:", err);
+      document.getElementById("videos-container").innerHTML = "<p style='color:red; text-align:center;'>Failed to load videos.</p>";
+    });
+  </script>
+</body>
+</html>

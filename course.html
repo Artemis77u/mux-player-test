@@ -42,7 +42,8 @@
 
     const airtableToken = "patNGrZNwfEVXAAQQ.0b066f675070d9280cac1ff726847edb1474cbc9dae0cc8634dd5e2369cac9ae";
     const baseId = "app0nqXjYS3mdULGj";
-    const tableName = "Imported%20table"; // URL-encoded "Imported table"
+    const tableName = "Imported%20table";
+    const makeWebhookUrl = "https://hook.us2.make.com/r5m5023uf3wh4qgymgp1wjsqmue3bd71";
 
     fetch(`https://api.airtable.com/v0/${baseId}/${tableName}`, {
       headers: {
@@ -88,6 +89,46 @@
               video_stream_type: "on-demand"
             }
           });
+
+          const sendEvent = (eventType) => {
+            fetch(makeWebhookUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                viewer_user_id: email,
+                video_id: videoId,
+                video_title: title,
+                event_type: eventType,
+                timestamp: new Date().toISOString()
+              })
+            });
+          };
+
+          videoEl.addEventListener("play", () => sendEvent("play"));
+          videoEl.addEventListener("pause", () => sendEvent("pause"));
+
+          videoEl.addEventListener("timeupdate", () => {
+            const percent = (videoEl.currentTime / videoEl.duration) * 100;
+
+            if (percent > 25 && !videoEl._sent25) {
+              sendEvent("25% watched");
+              videoEl._sent25 = true;
+            }
+            if (percent > 50 && !videoEl._sent50) {
+              sendEvent("50% watched");
+              videoEl._sent50 = true;
+            }
+            if (percent > 75 && !videoEl._sent75) {
+              sendEvent("75% watched");
+              videoEl._sent75 = true;
+            }
+            if (percent > 95 && !videoEl._sent100) {
+              sendEvent("100% watched");
+              videoEl._sent100 = true;
+            }
+          });
         }, 250);
       });
     })
@@ -98,5 +139,3 @@
   </script>
 </body>
 </html>
-
-

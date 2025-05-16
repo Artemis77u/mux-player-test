@@ -106,9 +106,6 @@
             });
           };
 
-          videoEl.addEventListener("play", () => sendEvent("play"));
-          videoEl.addEventListener("pause", () => sendEvent("pause"));
-
           videoEl.addEventListener("timeupdate", () => {
             const percent = (videoEl.currentTime / videoEl.duration) * 100;
 

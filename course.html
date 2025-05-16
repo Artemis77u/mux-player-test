@@ -108,10 +108,10 @@
 
           videoEl.addEventListener("timeupdate", () => {
             const percent = (videoEl.currentTime / videoEl.duration) * 100;
-
             if (percent > 95 && !videoEl._sent100) {
               sendEvent("100% watched");
               videoEl._sent100 = true;
+              console.log("✅ Sent: 100% watched");
             }
           });
         }, 250);
@@ -124,3 +124,4 @@
   </script>
 </body>
 </html>
+

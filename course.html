@@ -112,8 +112,8 @@
           videoEl.addEventListener("timeupdate", () => {
             const percent = (videoEl.currentTime / videoEl.duration) * 100;
 
-            if (percent > 1 && !videoEl._sent25) {
-              sendEvent("1% watched");
+            if (percent > 25 && !videoEl._sent25) {
+              sendEvent("25% watched");
               videoEl._sent25 = true;
             }
             if (percent > 50 && !videoEl._sent50) {

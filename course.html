@@ -5,77 +5,97 @@
   <title>Dynamic Airtable Course</title>
   <script src="https://cdn.jsdelivr.net/npm/mux-embed@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
- <style>
-  * {
-    box-sizing: border-box;
-  }
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #f0f2f5;
-    margin: 0;
-    padding: 2rem 1rem;
-    color: #222;
-  }
-
-  h1 {
-    text-align: center;
-    margin-bottom: 2rem;
-    font-size: 1.8rem;
-  }
-
-  .video-block {
-    background: white;
-    max-width: 800px;
-    margin: 1.5rem auto;
-    padding: 1rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition: box-shadow 0.2s ease;
-  }
-
-  .video-block:hover {
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-  }
-
-  .video-title {
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-    font-size: 1.1rem;
-  }
-
-  video {
-    width: 100%;
-    border-radius: 8px;
-    background: #000;
-  }
-
-  @media (max-width: 600px) {
     body {
-      padding: 1rem;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 2rem 1rem;
+      color: #222;
     }
 
     h1 {
-      font-size: 1.4rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .video-title {
-      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 1.8rem;
     }
 
     .video-block {
-      padding: 0.75rem;
+      background: white;
+      max-width: 800px;
+      margin: 1.5rem auto;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transition: box-shadow 0.2s ease;
     }
-  }
-</style>
 
+    .video-block:hover {
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .video-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      padding: 0.75rem;
+      cursor: pointer;
+      background: #f2f2f2;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      transition: background 0.2s;
+    }
+
+    .video-title:hover {
+      background: #e0e0e0;
+    }
+
+    .video-wrapper {
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    video {
+      width: 100%;
+      border-radius: 8px;
+      background: #000;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem;
+      }
+
+      h1 {
+        font-size: 1.4rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .video-title {
+        font-size: 1rem;
+      }
+
+      .video-block {
+        padding: 0.75rem;
+      }
+    }
+  </style>
 </head>
 <body>
   <h1>Your Wish Is Your Command – Dynamic Course</h1>
   <div id="videos-container"></div>
 
   <script>
+    function toggleVideo(titleEl) {
+      const wrapper = titleEl.nextElementSibling;
+      const isVisible = wrapper.style.display === "block";
+      wrapper.style.display = isVisible ? "none" : "block";
+      titleEl.textContent = (isVisible ? '▶️ ' : '▼ ') + titleEl.textContent.slice(2);
+    }
+
     const email = new URLSearchParams(window.location.search).get("email") || localStorage.getItem("userEmail") || "anonymous";
     localStorage.setItem("userEmail", email);
 
@@ -101,12 +121,14 @@
         const block = document.createElement("div");
         block.className = "video-block";
         block.innerHTML = `
-          <div class="video-title">${title}</div>
-          <video id="${videoId}" controls></video>
+          <div class="video-title" onclick="toggleVideo(this)">▶️ ${title}</div>
+          <div class="video-wrapper">
+            <video id="${videoId}" controls></video>
+          </div>
         `;
         container.appendChild(block);
 
-        const videoEl = document.getElementById(videoId);
+        const videoEl = block.querySelector("video");
 
         if (Hls.isSupported()) {
           const hls = new Hls();
@@ -163,4 +185,3 @@
   </script>
 </body>
 </html>
-

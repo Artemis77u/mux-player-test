@@ -70,7 +70,7 @@
     const tableName = "Videos";
     const makeWebhookUrl = "https://hook.us2.make.com/r5m5023uf3wh4qgymgp1wjsqmue3bd71";
 
-    fetch(`https://api.airtable.com/v0/${baseId}/${tableName}`, {
+    fetch(`https://api.airtable.com/v0/${baseId}/${tableName}?view=Published&sort[0][field]=Lesson%20Number&sort[0][direction]=asc`, {
       headers: {
         Authorization: `Bearer ${airtableToken}`
       }

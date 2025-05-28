@@ -104,9 +104,9 @@
     const tableName = "Videos";
     const makeWebhookUrl = "https://hook.us2.make.com/r5m5023uf3wh4qgymgp1wjsqmue3bd71";
 
-    fetch(`https://api.airtable.com/v0/${baseId}/${tableName}`, {
+    fetch(https://api.airtable.com/v0/${baseId}/${tableName}, {
       headers: {
-        Authorization: `Bearer ${airtableToken}`
+        Authorization: Bearer ${airtableToken}
       }
     })
     .then(res => res.json())
@@ -120,26 +120,26 @@
 
         const block = document.createElement("div");
         block.className = "video-block";
-        block.innerHTML = `
+        block.innerHTML = 
           <div class="video-title" onclick="toggleVideo(this)">▶️ ${title}</div>
           <div class="video-wrapper">
             <video id="${videoId}" controls></video>
           </div>
-        `;
+        ;
         container.appendChild(block);
 
         const videoEl = block.querySelector("video");
 
         if (Hls.isSupported()) {
           const hls = new Hls();
-          hls.loadSource(`https://stream.mux.com/${playbackId}.m3u8`);
+          hls.loadSource(https://stream.mux.com/${playbackId}.m3u8);
           hls.attachMedia(videoEl);
         } else if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
-          videoEl.src = `https://stream.mux.com/${playbackId}.m3u8`;
+          videoEl.src = https://stream.mux.com/${playbackId}.m3u8;
         }
 
         setTimeout(() => {
-          mux.monitor(`#${videoId}`, {
+          mux.monitor(#${videoId}, {
             debug: true,
             data: {
               env_key: "1mb83nn1ar08r0faf628pf2u5",

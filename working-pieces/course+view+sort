@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Your Wish Is Your Command</title>
+  <script src="https://cdn.jsdelivr.net/npm/mux-embed@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 2rem 1rem;
+      color: #222;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 1.8rem;
+    }
+    .video-block {
+      background: white;
+      max-width: 800px;
+      margin: 1.5rem auto;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transition: box-shadow 0.2s ease;
+    }
+    .video-block:hover { box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); }
+    .video-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      padding: 0.75rem;
+      cursor: pointer;
+      background: #f2f2f2;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      transition: background 0.2s;
+    }
+    .video-title:hover { background: #e0e0e0; }
+    .video-wrapper { margin-top: 0.5rem; display: none; }
+    video { width: 100%; border-radius: 8px; background: #000; }
+    @media (max-width: 600px) {
+      body { padding: 1rem; }
+      h1 { font-size: 1.4rem; margin-bottom: 1.5rem; }
+      .video-title { font-size: 1rem; }
+      .video-block { padding: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Your Wish Is Your Command</h1>
+  <div id="videos-container"></div>
+
+  <script>
+    function toggleVideo(titleEl) {
+      const wrapper = titleEl.nextElementSibling;
+      const isVisible = wrapper.style.display === "block";
+      wrapper.style.display = isVisible ? "none" : "block";
+      titleEl.textContent = (isVisible ? '▶️ ' : '▼ ') + titleEl.textContent.slice(2);
+    }
+
+    const email = new URLSearchParams(window.location.search).get("email") || localStorage.getItem("userEmail") || "anonymous";
+    localStorage.setItem("userEmail", email);
+
+    const airtableToken = "patNGrZNwfEVXAAQQ.0b066f675070d9280cac1ff726847edb1474cbc9dae0cc8634dd5e2369cac9ae";
+    const baseId = "app0nqXjYS3mdULGj";
+    const tableName = "Videos";
+    const makeWebhookUrl = "https://hook.us2.make.com/r5m5023uf3wh4qgymgp1wjsqmue3bd71";
+
+    fetch(`https://api.airtable.com/v0/${baseId}/${tableName}?view=Published&sort[0][field]=Lesson%20Number&sort[0][direction]=asc`, {
+      headers: {
+        Authorization: `Bearer ${airtableToken}`
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById("videos-container");
+
+      data.records.forEach(record => {
+        const title = record.fields["Title"];
+        const playbackId = record.fields["Playback ID"];
+        const videoId = record.id;
+
+        const block = document.createElement("div");
+        block.className = "video-block";
+        block.innerHTML = `
+          <div class="video-title" onclick="toggleVideo(this)">▶️ ${title}</div>
+          <div class="video-wrapper">
+            <video id="${videoId}" controls></video>
+          </div>
+        `;
+        container.appendChild(block);
+
+        const videoEl = block.querySelector("video");
+
+        if (Hls.isSupported()) {
+          const hls = new Hls();
+          hls.loadSource(`https://stream.mux.com/${playbackId}.m3u8`);
+          hls.attachMedia(videoEl);
+        } else if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
+          videoEl.src = `https://stream.mux.com/${playbackId}.m3u8`;
+        }
+
+        setTimeout(() => {
+          mux.monitor(`#${videoId}`, {
+            debug: true,
+            data: {
+              env_key: "1mb83nn1ar08r0faf628pf2u5",
+              viewer_user_id: email,
+              video_id: videoId,
+              video_title: title,
+              player_name: "Dynamic Airtable Player",
+              video_stream_type: "on-demand"
+            }
+          });
+
+          const sendEvent = (eventType) => {
+            fetch(makeWebhookUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                viewer_user_id: email,
+                video_id: videoId,
+                video_title: title,
+                event_type: eventType,
+                timestamp: new Date().toISOString()
+              })
+            });
+          };
+
+          videoEl.addEventListener("timeupdate", () => {
+            const percent = (videoEl.currentTime / videoEl.duration) * 100;
+            if (percent > 95 && !videoEl._sent100) {
+              sendEvent("100% watched");
+              videoEl._sent100 = true;
+              console.log("✅ Sent: 100% watched");
+            }
+          });
+        }, 250);
+      });
+    })
+    .catch(err => {
+      console.error("Failed to fetch Airtable data:", err);
+      document.getElementById("videos-container").innerHTML = "<p style='color:red; text-align:center;'>Failed to load videos.</p>";
+    });
+  </script>
+</body>
+</html>

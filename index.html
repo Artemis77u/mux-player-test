@@ -73,15 +73,18 @@ button:hover {
 
 @media (max-width: 480px) {
   body {
-    align-items: flex-start; /* move card to top */
-    padding-top: 1rem; /* little space at top */
+    flex-direction: column; /* stack elements vertically */
+    align-items: stretch; /* remove center alignment */
+    height: auto; /* let page scroll naturally */
+    min-height: auto; /* remove fixed height */
+    padding-top: 1rem; /* breathing room */
   }
 
   .card {
     margin: 0;
     border-radius: 0;
     box-shadow: none;
-    padding: 1rem; /* smaller padding on mobile */
+    padding: 1rem;
   }
 
   .card h2 {

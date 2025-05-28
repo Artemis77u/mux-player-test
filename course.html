@@ -104,7 +104,7 @@
     const tableName = "Videos";
     const makeWebhookUrl = "https://hook.us2.make.com/r5m5023uf3wh4qgymgp1wjsqmue3bd71";
 
-    fetch(`https://api.airtable.com/v0/${baseId}/${tableName}?filterByFormula=Published`, {
+    fetch(`https://api.airtable.com/v0/${baseId}/${tableName}`, {
       headers: {
         Authorization: `Bearer ${airtableToken}`
       }

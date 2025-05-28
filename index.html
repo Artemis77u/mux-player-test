@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <title>Access the Course</title>
-<style>
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background: #f4f4f4;
@@ -12,7 +11,7 @@ body {
   align-items: center;
   min-height: 100vh;
   margin: 0;
-  padding: 1rem;
+  padding: 0; /* remove extra padding */
 }
 
 .card {
@@ -21,8 +20,9 @@ body {
   border-radius: 12px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px;
+  max-width: 100%;
   box-sizing: border-box;
+  margin: 0 1rem; /* add margin to prevent edge clipping on mobile */
 }
 
 .card h2 {
@@ -72,8 +72,8 @@ button:hover {
 
 @media (max-width: 480px) {
   .card {
-    max-width: none;
     padding: 1.5rem;
+    margin: 0.5rem; /* margin for safe spacing on small screens */
   }
   .card h2 {
     font-size: 1.3rem;
@@ -84,7 +84,6 @@ button:hover {
   }
 }
 
-</style>
 
 
 </head>

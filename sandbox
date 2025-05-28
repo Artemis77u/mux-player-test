@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+  body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #eee;
+  }
+
+  .card {
+    background: white;
+    padding: 2rem;
+    border: 1px solid #000;
+    max-width: 400px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  @media (max-width: 480px) {
+    body {
+      align-items: flex-start;
+      justify-content: flex-start;
+      height: auto;
+    }
+    .card {
+      margin: 0;
+      border: 2px dashed red;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h2>TEST CARD</h2>
+    <p>This is to prove it’s working!</p>
+  </div>
+</body>
+</html>

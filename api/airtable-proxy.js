@@ -1,7 +1,7 @@
 export default async function handler(req, res) {
   try {
     const response = await fetch(
-      `https://api.airtable.com/v0/app0nqXjYS3mdULGj/Videos?view=Published&sort[0][field]=Lesson%20Number&sort[0][direction]=asc`,
+      `https://api.airtable.com/v0/appOwNGvNT2ooyr9u/tblxxXnFFIQUxZDKj?view=Published&sort[0][field]=Lesson%20Number&sort[0][direction]=asc`,
       {
         headers: {
           Authorization: `Bearer ${process.env.AIRTABLE_TOKEN}`

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,89 +65,83 @@
     const email = new URLSearchParams(window.location.search).get("email") || localStorage.getItem("userEmail") || "anonymous";
     localStorage.setItem("userEmail", email);
 
-    const airtableToken = "patNGrZNwfEVXAAQQ.0b066f675070d9280cac1ff726847edb1474cbc9dae0cc8634dd5e2369cac9ae";
-    const baseId = "app0nqXjYS3mdULGj";
-    const tableName = "Videos";
     const makeWebhookUrl = "https://hook.us2.make.com/r5m5023uf3wh4qgymgp1wjsqmue3bd71";
 
-    fetch(`https://api.airtable.com/v0/${baseId}/${tableName}?view=Published&sort[0][field]=Lesson%20Number&sort[0][direction]=asc`, {
-      headers: {
-        Authorization: `Bearer ${airtableToken}`
-      }
-    })
-    .then(res => res.json())
-    .then(data => {
-      const container = document.getElementById("videos-container");
+    // NEW: Secure fetch from your Vercel API (no tokens exposed!)
+    fetch('https://mux-player-test-six.vercel.app/api/airtable-proxy')
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("videos-container");
 
-      data.records.forEach(record => {
-        const title = record.fields["Title"];
-        const playbackId = record.fields["Playback ID"];
-        const videoId = record.id;
+        data.records.forEach(record => {
+          const title = record.fields["Title"];
+          const playbackId = record.fields["Playback ID"];
+          const videoId = record.id;
 
-        const block = document.createElement("div");
-        block.className = "video-block";
-        block.innerHTML = `
-          <div class="video-title" onclick="toggleVideo(this)">▶️ ${title}</div>
-          <div class="video-wrapper">
-            <video id="${videoId}" controls></video>
-          </div>
-        `;
-        container.appendChild(block);
+          const block = document.createElement("div");
+          block.className = "video-block";
+          block.innerHTML = `
+            <div class="video-title" onclick="toggleVideo(this)">▶️ ${title}</div>
+            <div class="video-wrapper">
+              <video id="${videoId}" controls></video>
+            </div>
+          `;
+          container.appendChild(block);
 
-        const videoEl = block.querySelector("video");
+          const videoEl = block.querySelector("video");
 
-        if (Hls.isSupported()) {
-          const hls = new Hls();
-          hls.loadSource(`https://stream.mux.com/${playbackId}.m3u8`);
-          hls.attachMedia(videoEl);
-        } else if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
-          videoEl.src = `https://stream.mux.com/${playbackId}.m3u8`;
-        }
+          if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(`https://stream.mux.com/${playbackId}.m3u8`);
+            hls.attachMedia(videoEl);
+          } else if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
+            videoEl.src = `https://stream.mux.com/${playbackId}.m3u8`;
+          }
 
-        setTimeout(() => {
-          mux.monitor(`#${videoId}`, {
-            debug: true,
-            data: {
-              env_key: "1mb83nn1ar08r0faf628pf2u5",
-              viewer_user_id: email,
-              video_id: videoId,
-              video_title: title,
-              player_name: "Dynamic Airtable Player",
-              video_stream_type: "on-demand"
-            }
-          });
-
-          const sendEvent = (eventType) => {
-            fetch(makeWebhookUrl, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({
+          setTimeout(() => {
+            mux.monitor(`#${videoId}`, {
+              debug: true,
+              data: {
+                env_key: "1mb83nn1ar08r0faf628pf2u5",
                 viewer_user_id: email,
                 video_id: videoId,
                 video_title: title,
-                event_type: eventType,
-                timestamp: new Date().toISOString()
-              })
+                player_name: "Dynamic Airtable Player",
+                video_stream_type: "on-demand"
+              }
             });
-          };
 
-          videoEl.addEventListener("timeupdate", () => {
-            const percent = (videoEl.currentTime / videoEl.duration) * 100;
-            if (percent > 95 && !videoEl._sent100) {
-              sendEvent("100% watched");
-              videoEl._sent100 = true;
-              console.log("✅ Sent: 100% watched");
-            }
-          });
-        }, 250);
+            const sendEvent = (eventType) => {
+              fetch(makeWebhookUrl, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                  viewer_user_id: email,
+                  video_id: videoId,
+                  video_title: title,
+                  event_type: eventType,
+                  timestamp: new Date().toISOString()
+                })
+              });
+            };
+
+            videoEl.addEventListener("timeupdate", () => {
+              const percent = (videoEl.currentTime / videoEl.duration) * 100;
+              if (percent > 95 && !videoEl._sent100) {
+                sendEvent("100% watched");
+                videoEl._sent100 = true;
+                console.log("✅ Sent: 100% watched");
+              }
+            });
+          }, 250);
+        });
+      })
+      .catch(err => {
+        console.error("Failed to fetch video data:", err);
+        document.getElementById("videos-container").innerHTML = "<p style='color:red; text-align:center;'>Failed to load videos.</p>";
       });
-    })
-    .catch(err => {
-      console.error("Failed to fetch Airtable data:", err);
-      document.getElementById("videos-container").innerHTML = "<p style='color:red; text-align:center;'>Failed to load videos.</p>";
-    });
   </script>
 </body>
 </html>

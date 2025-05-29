@@ -1,4 +1,6 @@
 export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow any origin
+
   try {
     const response = await fetch(
       `https://api.airtable.com/v0/appOwNGvNT2ooyr9u/tblxxXnFFIQUxZDKj?view=Published&sort[0][field]=Lesson%20Number&sort[0][direction]=asc`,
